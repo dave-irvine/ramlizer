@@ -27,8 +27,6 @@ The POST endpoint takes four parameters in a JSON payload:
 
 Usually RAML endpoints only have one example, so how to define multiple ones?
 
-<div class="page"/>
-
 #### Multiple RAML examples
 
 We use an undocumented RAML feature to let you specify multiple named examples for your endpoints, and then you select which example to run for the next call to the endpoint.

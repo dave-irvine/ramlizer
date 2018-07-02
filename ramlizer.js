@@ -184,12 +184,22 @@ function fillStrategies(raml) {
   });
 }
 
-function createServer(raml) {
-  const app = osprey.Router();
+function createServer(raml, argv) {
+  const app = osprey.Router(),
+    port = argv.port ? argv.port : 8080,
+    endpoint = argv.endpoint ? argv.endpoint : "ramlizer";
 
   app.use(morgan("combined"));
   app.use(bodyParser.json());
-  app.post("/raml-scenarios", scenarioConfigurator);
+  app.post("/" + endpoint, scenarioConfigurator);
+
+  spinner.succeed();
+  spinner.start(
+    "Listening for configuration requests on http://localhost:" +
+      port +
+      "/" +
+      endpoint
+  );
 
   app.use(osprey.server(raml, {}));
   app.use(mockServer(raml));
@@ -202,9 +212,9 @@ function createServer(raml) {
   spinner.succeed();
   spinner.start("Launching HTTP server");
 
-  server.listen(8080, () => {
+  server.listen(port, () => {
     spinner.succeed();
-    spinner.info("Listening on http://localhost:8080");
+    spinner.info("Listening on http://localhost:" + port);
   });
 }
 
@@ -226,7 +236,7 @@ ramlParser
     spinner.succeed();
     spinner.start("Creating HTTP mock service");
 
-    createServer(raml);
+    createServer(raml, argv);
   })
   .catch(err => {
     console.log(err);
