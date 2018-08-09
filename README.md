@@ -4,7 +4,7 @@ It's a strategizer for RAML.
 
 ## What?
 
-More specifically it's an API mock service that supports the use of strategies, and allows configuration of the mocking service to follow specific strategies. For RAML.
+More specifically it's an API mock service that supports the use of strategies, and allows configuration of the mocking service to follow specific strategies. For multiple RAML files.
 
 ## Why?
 
@@ -79,3 +79,21 @@ And here's the JSON response when you call the `/login` endpoint:
   ]
 }
 ```
+
+#### Multiple RAML files
+
+If you add multiple files to the target RAML folder, Ramlizer will process them all and create multiple end-points from your files.
+
+#### Script options
+
+_--folder_
+
+This option sets the destination folder where the Ramlizer script will look for RAML files.
+
+_--port_
+
+This option sets the port Ramlizer will use. By default this is '8080'.
+
+_--endpoint_
+
+This option sets the endpoint Ramlizer will use for its endpoint. By default this is 'ramlizer'.
