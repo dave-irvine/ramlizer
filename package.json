@@ -1,10 +1,14 @@
 {
   "name": "ramlizer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A strategizer for RAML",
   "main": "ramlizer.js",
   "bin": {
     "ramlizer": "./ramlizer.js"
+  },
+  "scripts": {
+    "example": "node ./ramlizer.js --folder ./example_raml/ --port 8080",
+    "exampleDebug": "node --inspect-brk ./ramlizer.js --folder ./example_raml/ --port 8080"
   },
   "author": "Dave Irvine <dave@daveirvine.me>",
   "license": "MIT",

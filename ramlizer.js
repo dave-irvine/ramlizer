@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 const argv = require("yargs")
-  .option("file", {
+  .option("folder", {
     alias: "f",
-    describe: "path to the raml file to mock",
+    describe: "path to the raml files to mock",
     requiresArg: true,
     type: "string"
   })
-  .demandOption("file").argv;
+  .demandOption("folder").argv;
 
 const _ = require("lodash");
 const ora = require("ora");
@@ -27,6 +27,9 @@ spinner.start("Loading RAML");
 
 const plannedMethodResponseCodes = {};
 const plannedMethodExampleNames = {};
+
+//Set up app
+const app = osprey.Router();
 
 function mockHandler(handledRoute) {
   return (req, res) => {
@@ -184,9 +187,8 @@ function fillStrategies(raml) {
   });
 }
 
-function createServer(raml, argv) {
-  const app = osprey.Router(),
-    port = argv.port ? argv.port : 8080,
+function startServer(argv) {
+  const port = argv.port ? argv.port : 8080,
     endpoint = argv.endpoint ? argv.endpoint : "ramlizer";
 
   app.use(morgan("combined"));
@@ -200,17 +202,24 @@ function createServer(raml, argv) {
       "/" +
       endpoint
   );
+}
 
-  app.use(osprey.server(raml, {}));
+function applyRAML(raml, file) {
+  //Start servers
+  spinner.succeed();
+  spinner.start("Creating HTTP mock services for " + file);
+
   app.use(mockServer(raml));
   app.use(osprey.errorHandler());
+}
 
-  const server = http.createServer((req, res) => {
-    app(req, res, finalhandler(req, res));
-  });
-
+function portListener(argv) {
   spinner.succeed();
   spinner.start("Launching HTTP server");
+  const server = http.createServer((req, res) => {
+      app(req, res, finalhandler(req, res));
+    }),
+    port = argv.port ? argv.port : 8080;
 
   server.listen(port, () => {
     spinner.succeed();
@@ -218,26 +227,46 @@ function createServer(raml, argv) {
   });
 }
 
-ramlParser
-  .loadRAML(argv.file, { rejectOnErrors: true })
-  .then(ramlApi => {
-    spinner.succeed();
-    spinner.start("Parsing RAML");
+function parseRAML(file) {
+  //
+  let raml = "";
+  // Parse Raml based on file
+  ramlParser
+    .loadRAML(file, { rejectOnErrors: true })
+    .then(ramlApi => {
+      spinner.succeed();
+      spinner.start("Parsing RAML");
 
-    const raml = ramlApi.expand(true).toJSON({
-      serializeMetadata: false
+      raml = ramlApi.expand(true).toJSON({
+        serializeMetadata: false
+      });
+
+      spinner.succeed();
+      spinner.start("Filling strategy queues");
+
+      fillStrategies(raml);
+
+      //Apply RAML strategies to server
+      applyRAML(raml, file);
+    })
+    .catch(err => {
+      console.log(err);
     });
+}
 
-    spinner.succeed();
-    spinner.start("Filling strategy queues");
+const ramlFolder = String(argv.folder);
+const fs = require("fs");
 
-    fillStrategies(raml);
+startServer(argv);
 
-    spinner.succeed();
-    spinner.start("Creating HTTP mock service");
+fs.readdir(argv.folder, function(err, files) {
+  const ramlFiles = files.filter(el => /\.raml$/.test(el));
 
-    createServer(raml, argv);
-  })
-  .catch(err => {
-    console.log(err);
+  ramlFiles.forEach(file => {
+    parseRAML(ramlFolder + file);
   });
+
+  setTimeout(function() {
+    portListener(argv);
+  }, 4000);
+});
