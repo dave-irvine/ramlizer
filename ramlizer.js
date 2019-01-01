@@ -124,8 +124,8 @@ function fillStrategies(raml) {
 
       if (!resourceMethod.responses) {
         spinner.warn(
-          `${resourceMethod.method}:${
-            resource.relativeUri
+          `${resource.relativeUri}:${
+            resourceMethod.method
           } has no responses, skipping`
         );
         return;
@@ -133,7 +133,7 @@ function fillStrategies(raml) {
 
       _.each(resourceMethod.responses, methodResponse => {
         spinner.info(
-          `${resourceMethod.method}:${resource.relativeUri} will produce a '${
+          `${resource.relativeUri}:${resourceMethod.method} will produce a '${
             methodResponse.code
           }' response code`
         );
@@ -142,8 +142,8 @@ function fillStrategies(raml) {
 
         if (_.size(bodies) > 1) {
           spinner.warn(
-            `${resourceMethod.method}:${
-              resource.relativeUri
+            `${resource.relativeUri}:${
+              resourceMethod.method
             } has multiple body types, picking the first`
           );
         }
@@ -152,7 +152,7 @@ function fillStrategies(raml) {
 
         if (!body.examples) {
           spinner.warn(
-            `${resourceMethod.method}:${resource.relativeUri}:${
+            `${resource.relativeUri}:${resourceMethod.method}:${
               methodResponse.code
             } has no examples, skipping`
           );
@@ -161,7 +161,7 @@ function fillStrategies(raml) {
 
         _.each(body.examples, example => {
           spinner.info(
-            `${resourceMethod.method}:${resource.relativeUri}:${
+            `${resource.relativeUri}:${resourceMethod.method}:${
               methodResponse.code
             } contains an example named '${example.name}'`
           );
@@ -175,8 +175,8 @@ function fillStrategies(raml) {
       }
 
       spinner.info(
-        `The first call to ${resourceMethod.method}:${
-          resource.relativeUri
+        `The first call to ${resource.relativeUri}:${
+          resourceMethod.method
         } will receive a '${selectedCode}' response`
       );
 
