@@ -124,8 +124,8 @@ function fillStrategies(raml) {
 
       if (!resourceMethod.responses) {
         spinner.warn(
-          `${resource.relativeUri}:${
-            resourceMethod.method
+          `${resourceMethod.method}:${
+            resource.relativeUri
           } has no responses, skipping`
         );
         return;
@@ -133,7 +133,7 @@ function fillStrategies(raml) {
 
       _.each(resourceMethod.responses, methodResponse => {
         spinner.info(
-          `${resource.relativeUri}:${resourceMethod.method} will produce a '${
+          `${resourceMethod.method}:${resource.relativeUri} will produce a '${
             methodResponse.code
           }' response code`
         );
@@ -142,8 +142,8 @@ function fillStrategies(raml) {
 
         if (_.size(bodies) > 1) {
           spinner.warn(
-            `${resource.relativeUri}:${
-              resourceMethod.method
+            `${resourceMethod.method}:${
+              resource.relativeUri
             } has multiple body types, picking the first`
           );
         }
@@ -152,7 +152,7 @@ function fillStrategies(raml) {
 
         if (!body.examples) {
           spinner.warn(
-            `${resource.relativeUri}:${resourceMethod.method}:${
+            `${resourceMethod.method}:${resource.relativeUri}:${
               methodResponse.code
             } has no examples, skipping`
           );
@@ -161,7 +161,7 @@ function fillStrategies(raml) {
 
         _.each(body.examples, example => {
           spinner.info(
-            `${resource.relativeUri}:${resourceMethod.method}:${
+            `${resourceMethod.method}:${resource.relativeUri}:${
               methodResponse.code
             } contains an example named '${example.name}'`
           );
@@ -175,14 +175,18 @@ function fillStrategies(raml) {
       }
 
       spinner.info(
-        `The first call to ${resource.relativeUri}:${
-          resourceMethod.method
+        `The first call to ${resourceMethod.method}:${
+          resource.relativeUri
         } will receive a '${selectedCode}' response`
       );
 
       plannedMethodResponseCodes[
-        `${resource.relativeUri}:${resourceMethod.method}`
+        `${resourceMethod.method}:${resource.relativeUri}`
       ] = selectedCode;
+
+      plannedMethodExampleNames[
+        `${resourceMethod.method}:${resource.relativeUri}`
+      ] = "default";
     });
   });
 }
