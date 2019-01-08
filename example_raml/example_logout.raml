@@ -24,8 +24,12 @@ types:
         body:
           properties:
             response:
-              enum:
-                - success
+              type: string
+          examples:
+            default:
+              response: default
+            success:
+              response: success
       400:
         body:
           properties:

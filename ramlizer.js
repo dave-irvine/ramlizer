@@ -181,8 +181,12 @@ function fillStrategies(raml) {
       );
 
       plannedMethodResponseCodes[
-        `${resource.relativeUri}:${resourceMethod.method}`
+        `${resourceMethod.method}:${resource.relativeUri}`
       ] = selectedCode;
+
+      plannedMethodExampleNames[
+        `${resourceMethod.method}:${resource.relativeUri}`
+      ] = "default";
     });
   });
 }
